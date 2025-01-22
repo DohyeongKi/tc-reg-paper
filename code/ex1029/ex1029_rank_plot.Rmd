@@ -1,0 +1,102 @@
+```{r}
+rm(list = ls())
+
+########################################################################
+# Source and Library ###################################################
+library(tidyverse)
+library(latex2exp)
+########################################################################
+```
+
+```{r}
+########################################################################
+# Load Results #########################################################
+minus_log2_ratios <- as.character(seq(0, 8))
+est_results <- lapply(minus_log2_ratios, function(minus_log2_ratio) {
+  load(paste0("../../results/ex1029/ex1029_rep_minus_log2_ratio", 
+              minus_log2_ratio, ".Rda"))
+  results$estimation_results
+})
+names(est_results) <- minus_log2_ratios
+########################################################################
+```
+
+```{r}
+########################################################################
+# Set My Theme for ggplot ##############################################
+my_theme <- theme_minimal() +
+  theme(
+    plot.title = element_text(size = 7),
+    axis.title.x = element_text(size = 7),
+    axis.text.x = element_text(size = 6),
+    axis.title.y = element_text(size = 7),
+    axis.text.y = element_text(size = 6),
+    legend.title = element_text(size = 7),
+    legend.text = element_text(size = 6)
+  )
+########################################################################
+```
+
+
+```{r}
+########################################################################
+# Comparison Between Concave Regression Models and Mincer's Model ######
+colnames <- c("axcon", "tc", "additive", "mincer", "murphy")
+num_rep <- nrow(est_results[[minus_log2_ratios[1L]]])
+best_methods_concave_mincer <- do.call(
+  rbind, 
+  lapply(minus_log2_ratios, function(minus_log2_ratio) {
+    best_methods <- apply(
+      est_results[[minus_log2_ratio]][, colnames], MARGIN = 1L, which.min
+    )
+    
+    sampling_ratio <- 2**(as.numeric(minus_log2_ratio))
+    
+    cbind(sampling_ratio = rep(paste0("1/", sampling_ratio), num_rep), 
+          method = colnames[best_methods])
+  })
+)
+
+best_methods_concave_mincer <- best_methods_concave_mincer %>% 
+  as.data.frame() %>% 
+  mutate(method = fct_relevel(
+    method, 
+    "mincer", "murphy", "additive", "axcon", "tc"
+  ))
+```
+
+```{r, eval = F}
+best_methods_concave_mincer %>% filter(sampling_ratio == '1/16') %>% 
+  group_by(method) %>% 
+  summarize(n = n())
+```
+
+```{r}
+sampling_ratios <- paste0("1/", rev(2**(as.numeric(minus_log2_ratios))))
+
+best_performing_ratio_plot_concave_mincer <- best_methods_concave_mincer %>% 
+  ggplot(aes(factor(sampling_ratio, level = sampling_ratios), fill = method)) + 
+  geom_bar(position = "fill") +
+  labs(
+    x = "Ratio of Training Data ( / 0.9)",
+    y = "Best Performing Ratio", 
+    fill = "Method"
+  ) + 
+  scale_fill_viridis_d(labels = c(
+    "Mincer", "Murphy", "Additive", "Axial", "Totally"
+  )) + 
+  my_theme +
+  theme(legend.position = "bottom")
+
+best_performing_ratio_plot_concave_mincer
+########################################################################
+```
+
+```{r, eval = F}
+pdf(
+  "../../plots/ex1029/best_performing_ratio_concave_mincer.pdf",
+  width = 4.0, height = 4.2
+)
+best_performing_ratio_plot_concave_mincer
+dev.off()
+```

@@ -1,0 +1,93 @@
+```{r}
+rm(list = ls())
+
+########################################################################
+# Source and Library ###################################################
+library(tidyverse)
+########################################################################
+```
+
+```{r}
+########################################################################
+# Load Results #########################################################
+load("../../results/401ksubs/401ksubs_rep.Rda")
+estimation_results <- results$estimation_results
+
+load("../../results/401ksubs/401ksubs_mod_rep.Rda")
+estimation_results_mod <- results$estimation_results
+
+estimation_results_combined <- cbind(estimation_results, 
+                                     estimation_results_mod[, -1L, drop = FALSE])
+########################################################################
+```
+
+```{r}
+########################################################################
+# Set My Theme for ggplot ##############################################
+my_theme <- theme_minimal() +
+  theme(
+    plot.title = element_text(size = 9),
+    axis.title.x = element_text(size = 9),
+    axis.text.x = element_text(size = 8),
+    axis.title.y = element_text(size = 9),
+    axis.text.y = element_text(size = 8),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 8)
+  )
+########################################################################
+```
+
+```{r}
+########################################################################
+# Comparison Between the Models ########################################
+performance_rank <- apply(estimation_results_combined, MARGIN = 1L, rank)
+```
+
+```{r, eval = F}
+apply(performance_rank <= 1, MARGIN = 1L, sum)
+apply(performance_rank <= 3, MARGIN = 1L, sum)
+apply(performance_rank >= 8, MARGIN = 1L, sum)
+apply(performance_rank >= 9, MARGIN = 1L, sum)
+```
+
+```{r}
+performance_rank <- performance_rank %>% 
+  as.data.frame() %>% 
+  rownames_to_column("Model") %>% 
+  pivot_longer(cols = starts_with("result"), 
+               names_to = "Repetition", values_to = "Rank") %>% 
+  mutate(Model = fct_relevel(Model, 
+                             "quadratic",
+                             "interaction1", "interaction2", 
+                             "interaction3", "interaction4",  
+                             "additive",
+                             "our1", "our2", "our2_mod"))
+```
+
+```{r}
+performance_rank_cdf_plot <- performance_rank %>% 
+  ggplot() +
+  stat_ecdf(aes(Rank, color = Model), linewidth = 0.9) + 
+  labs(y = "Cumulative Probability") +
+  scale_color_viridis_d(labels = c("Quadratic",
+                                   "Interaciton 1", "Interaction 2", 
+                                   "Interaciton 3", "Interaction 4",
+                                   "Additive",
+                                   "Ours 1", "Ours 2", "Ours 2 (Mod.)")) +
+  my_theme +
+  guides(color = guide_legend(nrow = 3, byrow = TRUE)) +
+  scale_x_continuous(breaks = c(2, 4, 6, 8)) + 
+  theme(legend.position = "bottom")
+
+performance_rank_cdf_plot
+########################################################################
+```
+
+```{r, eval = F}
+pdf(
+  "../../plots/401ksubs/performance_rank_cdf_plot.pdf",
+  width = 4.0, height = 4.8
+)
+performance_rank_cdf_plot
+dev.off()
+```
