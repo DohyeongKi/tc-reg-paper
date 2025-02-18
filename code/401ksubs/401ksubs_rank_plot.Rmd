@@ -26,13 +26,13 @@ estimation_results_combined <- cbind(estimation_results,
 # Set My Theme for ggplot ##############################################
 my_theme <- theme_minimal() +
   theme(
-    plot.title = element_text(size = 9),
-    axis.title.x = element_text(size = 9),
-    axis.text.x = element_text(size = 8),
-    axis.title.y = element_text(size = 9),
-    axis.text.y = element_text(size = 8),
-    legend.title = element_text(size = 9),
-    legend.text = element_text(size = 8)
+    plot.title = element_text(size = 8),
+    axis.title.x = element_text(size = 8),
+    axis.text.x = element_text(size = 7),
+    axis.title.y = element_text(size = 8),
+    axis.text.y = element_text(size = 7),
+    legend.title = element_text(size = 8),
+    legend.text = element_text(size = 7)
   )
 ########################################################################
 ```
@@ -70,14 +70,15 @@ performance_rank_cdf_plot <- performance_rank %>%
   stat_ecdf(aes(Rank, color = Model), linewidth = 0.9) + 
   labs(y = "Cumulative Probability") +
   scale_color_viridis_d(labels = c("Quadratic",
-                                   "Interaciton 1", "Interaction 2", 
-                                   "Interaciton 3", "Interaction 4",
+                                   "Int 1", "Int 2", 
+                                   "Int 3", "Int 4",
                                    "Additive",
-                                   "Ours 1", "Ours 2", "Ours 2 (Mod.)")) +
+                                   "Ours 1", "Ours 2", "Ours 2 (Reg.)")) +
   my_theme +
   guides(color = guide_legend(nrow = 3, byrow = TRUE)) +
   scale_x_continuous(breaks = c(2, 4, 6, 8)) + 
-  theme(legend.position = "bottom")
+  guides(color = guide_legend(ncol = 1)) + 
+  theme(legend.position = "right")
 
 performance_rank_cdf_plot
 ########################################################################
@@ -86,7 +87,7 @@ performance_rank_cdf_plot
 ```{r, eval = F}
 pdf(
   "../../plots/401ksubs/performance_rank_cdf_plot.pdf",
-  width = 4.0, height = 4.8
+  width = 4.3, height = 2.8
 )
 performance_rank_cdf_plot
 dev.off()

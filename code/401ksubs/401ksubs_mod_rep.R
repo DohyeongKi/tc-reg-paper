@@ -84,7 +84,7 @@ estimation_results <- foreach(rep = 1L:num_rep, .combine = 'rbind') %dopar% {
   ######################################################################
   
   ######################################################################
-  # Our Model 2 ########################################################
+  # Our Model 2 (Reg.) #################################################
   # Data ###############################################################
   X_training <- k401ksubs_training %>%
     select(inc, age, e401k, fsize1, fsize2, fsize3, fsize4)
@@ -224,6 +224,6 @@ results <- list(
   threshold = threshold
 )
 
-save(results, file = paste0("../../results/401ksubs/401ksubs_mod_rep_check.Rda"))
+save(results, file = paste0("../../results/401ksubs/401ksubs_mod_rep.Rda"))
 gc()
 ########################################################################

@@ -26,13 +26,13 @@ names(est_results) <- minus_log2_ratios
 # Set My Theme for ggplot ##############################################
 my_theme <- theme_minimal() +
   theme(
-    plot.title = element_text(size = 7),
-    axis.title.x = element_text(size = 7),
-    axis.text.x = element_text(size = 6),
-    axis.title.y = element_text(size = 7),
-    axis.text.y = element_text(size = 6),
-    legend.title = element_text(size = 7),
-    legend.text = element_text(size = 6)
+    plot.title = element_text(size = 8),
+    axis.title.x = element_text(size = 8),
+    axis.text.x = element_text(size = 7),
+    axis.title.y = element_text(size = 8),
+    axis.text.y = element_text(size = 7),
+    legend.title = element_text(size = 8),
+    legend.text = element_text(size = 7)
   )
 ########################################################################
 ```
@@ -83,10 +83,11 @@ best_performing_ratio_plot_concave_mincer <- best_methods_concave_mincer %>%
     fill = "Method"
   ) + 
   scale_fill_viridis_d(labels = c(
-    "Mincer", "Murphy", "Additive", "Axial", "Totally"
+    "Mincer", "MW", "Additive", "Axial", "Totally"
   )) + 
   my_theme +
-  theme(legend.position = "bottom")
+  guides(color = guide_legend(ncol = 1)) + 
+  theme(legend.position = "right")
 
 best_performing_ratio_plot_concave_mincer
 ########################################################################
@@ -94,8 +95,8 @@ best_performing_ratio_plot_concave_mincer
 
 ```{r, eval = F}
 pdf(
-  "../../plots/ex1029/best_performing_ratio_concave_mincer.pdf",
-  width = 4.0, height = 4.2
+  "../../plots/ex1029/best_performing_ratio.pdf",
+  width = 3.8, height = 3.0
 )
 best_performing_ratio_plot_concave_mincer
 dev.off()

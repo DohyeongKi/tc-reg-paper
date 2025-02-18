@@ -51,12 +51,12 @@ for (i in (1L:m1)) {
 
 pdf(
   "../../plots/hprice/overfitting_instance_temp.pdf",
-  width = 6.5, height = 3.0
+  width = 5.8, height = 2.7
 )
 
 par(
   mfrow = c(1, 2),
-  mar = c(1.0, 1.0, 0.7, 0.4)
+  mar = c(0.8, 0.6, 0.9, 0.3)
 )
 persp(
   crime, rooms, our2_fit_outer,

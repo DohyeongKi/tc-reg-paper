@@ -88,7 +88,7 @@ estimation_results <- foreach(rep = 1L:num_rep, .combine = 'rbind') %dopar% {
   ######################################################################
   
   ######################################################################
-  # Murphy's Model #####################################################
+  # Murphy and Welch's Model ###########################################
   # Build a model
   murphy_model <- lm(
     y ~ Educ + Exper + I(Exper^2) + I(Exper^3) + I(Exper^4), 
