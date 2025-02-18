@@ -17,10 +17,6 @@ concave regression can be found in the folder `axcon`.
 
 ### ex1029
 
-- **`ex1029_eda.Rmd`**: Draws locally smoothed partial plots.
-- **`ex1029_single.R`**: Fits each model to a single set of sub-samples.
-- **`ex1029_reg_fit.Rmd`**: Draws the partial plots of the fits produced 
-by `ex1029_single.R`.
 - **`ex1029_rep.R`**: Conducts the main experiment for the dataset.
 - **`ex1029_rank_plot.Rmd`**: Creates the plot of the best-performing 
 ratios.
