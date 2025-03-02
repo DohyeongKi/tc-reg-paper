@@ -83,7 +83,7 @@ best_performing_ratio_plot_concave_mincer <- best_methods_concave_mincer %>%
     fill = "Method"
   ) + 
   scale_fill_viridis_d(labels = c(
-    "Mincer", "MW", "Additive", "Axial", "Totally"
+    "Mincer", "MW", "Additive", "Axially", "Totally"
   )) + 
   my_theme +
   guides(color = guide_legend(ncol = 1)) + 
