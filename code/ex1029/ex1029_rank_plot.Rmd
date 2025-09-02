@@ -5,6 +5,7 @@ rm(list = ls())
 # Source and Library ###################################################
 library(tidyverse)
 library(latex2exp)
+library(ggpubr)
 ########################################################################
 ```
 
@@ -78,6 +79,7 @@ best_performing_ratio_plot_concave_mincer <- best_methods_concave_mincer %>%
   ggplot(aes(factor(sampling_ratio, level = sampling_ratios), fill = method)) + 
   geom_bar(position = "fill") +
   labs(
+    title = "A",
     x = "Ratio of Training Data ( / 0.9)",
     y = "Best Performing Ratio", 
     fill = "Method"
@@ -85,19 +87,331 @@ best_performing_ratio_plot_concave_mincer <- best_methods_concave_mincer %>%
   scale_fill_viridis_d(labels = c(
     "Mincer", "MW", "Additive", "Axially", "Totally"
   )) + 
-  my_theme +
-  guides(color = guide_legend(ncol = 1)) + 
-  theme(legend.position = "right")
+  my_theme +  
+  theme(legend.position = "bottom")
 
 best_performing_ratio_plot_concave_mincer
-########################################################################
+```
+
+```{r}
+bottom2_methods_concave_mincer <- do.call(
+  rbind, 
+  lapply(minus_log2_ratios, function(minus_log2_ratio) {
+    bottom2_idx <- t(apply(
+      est_results[[minus_log2_ratio]][, colnames], MARGIN = 1L, 
+      function(x) order(x, decreasing = TRUE)[1L:2L])
+    )
+    
+    sampling_ratio <- 2**(as.numeric(minus_log2_ratio))
+    
+    cbind(sampling_ratio = rep(paste0("1/", sampling_ratio), num_rep * 2),
+          method = colnames[as.vector(bottom2_idx)])
+  })
+)
+
+bottom2_methods_concave_mincer <- bottom2_methods_concave_mincer %>% 
+  as.data.frame() %>% 
+  mutate(method = fct_relevel(
+    method, 
+    "mincer", "murphy", "additive", "axcon", "tc"
+  ))
+```
+
+```{r}
+bottom2_ratio_plot_concave_mincer <- bottom2_methods_concave_mincer %>% 
+  ggplot(aes(factor(sampling_ratio, level = sampling_ratios), fill = method)) + 
+  geom_bar(position = "fill", aes(weight = 1)) + 
+  scale_y_continuous(
+    name = "Bottom Two Ratio",
+    labels = function(x) x * 2
+  ) +
+  labs(
+    title = "B",
+    x = "Ratio of Training Data ( / 0.9)", 
+    fill = "Method"
+  ) + 
+  scale_fill_viridis_d(labels = c(
+    "Mincer", "MW", "Additive", "Axially", "Totally"
+  )) + 
+  my_theme +
+  theme(legend.position = "bottom")
+
+bottom2_ratio_plot_concave_mincer
+```
+
+```{r}
+top_bottom2_ratio_plot_concave_mincer <- ggarrange(
+  best_performing_ratio_plot_concave_mincer,
+  bottom2_ratio_plot_concave_mincer,
+  common.legend = TRUE, legend = "bottom"
+)
+
+top_bottom2_ratio_plot_concave_mincer
 ```
 
 ```{r, eval = F}
 pdf(
-  "../../plots/ex1029/best_performing_ratio.pdf",
-  width = 3.8, height = 3.0
+  "../../plots/ex1029/top_bottom2_ratio.pdf",
+  width = 5.6, height = 3.4
 )
-best_performing_ratio_plot_concave_mincer
+top_bottom2_ratio_plot_concave_mincer
+dev.off()
+```
+
+```{r}
+top2_methods_concave_mincer <- do.call(
+  rbind, 
+  lapply(minus_log2_ratios, function(minus_log2_ratio) {
+    top2_idx <- t(apply(
+      est_results[[minus_log2_ratio]][, colnames], MARGIN = 1L, 
+      function(x) order(x, decreasing = FALSE)[1L:2L])
+    )
+    
+    sampling_ratio <- 2**(as.numeric(minus_log2_ratio))
+    
+    cbind(sampling_ratio = rep(paste0("1/", sampling_ratio), num_rep * 2),
+          method = colnames[as.vector(top2_idx)])
+  })
+)
+
+top2_methods_concave_mincer <- top2_methods_concave_mincer %>% 
+  as.data.frame() %>% 
+  mutate(method = fct_relevel(
+    method, 
+    "mincer", "murphy", "additive", "axcon", "tc"
+  ))
+```
+
+```{r}
+top2_ratio_plot_concave_mincer <- top2_methods_concave_mincer %>% 
+  ggplot(aes(factor(sampling_ratio, level = sampling_ratios), fill = method)) + 
+  geom_bar(position = "fill", aes(weight = 1)) + 
+  scale_y_continuous(
+    name = "Top Two Ratio",
+    labels = function(x) x * 2
+  ) +
+  labs(
+    title = "A",
+    x = "Ratio of Training Data ( / 0.9)", 
+    fill = "Method"
+  ) + 
+  scale_fill_viridis_d(labels = c(
+    "Mincer", "MW", "Additive", "Axially", "Totally"
+  )) + 
+  my_theme +
+  theme(legend.position = "bottom")
+
+top2_ratio_plot_concave_mincer
+```
+
+```{r}
+worst_methods_concave_mincer <- do.call(
+  rbind, 
+  lapply(minus_log2_ratios, function(minus_log2_ratio) {
+    worst_methods <- apply(
+      est_results[[minus_log2_ratio]][, colnames], MARGIN = 1L, which.max
+    )
+    
+    sampling_ratio <- 2**(as.numeric(minus_log2_ratio))
+    
+    cbind(sampling_ratio = rep(paste0("1/", sampling_ratio), num_rep), 
+          method = colnames[worst_methods])
+  })
+)
+
+worst_methods_concave_mincer <- worst_methods_concave_mincer %>% 
+  as.data.frame() %>% 
+  mutate(method = fct_relevel(
+    method, 
+    "mincer", "murphy", "additive", "axcon", "tc"
+  ))
+```
+
+```{r}
+worst_performing_ratio_plot_concave_mincer <- worst_methods_concave_mincer %>% 
+  ggplot(aes(factor(sampling_ratio, level = sampling_ratios), fill = method)) + 
+  geom_bar(position = "fill") +
+  labs(
+    title = "B",
+    x = "Ratio of Training Data ( / 0.9)",
+    y = "Worst Performing Ratio", 
+    fill = "Method"
+  ) + 
+  scale_fill_viridis_d(labels = c(
+    "Mincer", "MW", "Additive", "Axially", "Totally"
+  )) + 
+  my_theme +
+  theme(legend.position = "bottom")
+
+worst_performing_ratio_plot_concave_mincer
+```
+
+```{r}
+top2_bottom_ratio_plot_concave_mincer <- ggarrange(
+  top2_ratio_plot_concave_mincer,
+  worst_performing_ratio_plot_concave_mincer,
+  common.legend = TRUE, legend = "bottom"
+)
+
+top2_bottom_ratio_plot_concave_mincer
+```
+
+```{r, eval = F}
+pdf(
+  "../../plots/ex1029/top2_bottom_ratio.pdf",
+  width = 5.6, height = 3.4
+)
+top2_bottom_ratio_plot_concave_mincer
+dev.off()
+```
+
+```{r}
+minus_log2_ratio <- "7"
+performance_rank_small <- apply(est_results[[minus_log2_ratio]], MARGIN = 1L, rank) %>% 
+  as.data.frame() %>% 
+  rownames_to_column("Model") %>% 
+  pivot_longer(cols = starts_with("result"), 
+               names_to = "Repetition", values_to = "Rank") %>%  
+  mutate(Model = fct_relevel(
+    Model, 
+    "mincer", "murphy", "additive", "axcon", "tc"
+  ))
+```
+
+```{r}
+performance_rank_cdf_plot_small <- performance_rank_small %>% 
+  ggplot() +
+  stat_ecdf(aes(Rank, color = Model), linewidth = 0.9) + 
+  labs(
+    title = "A",
+    y = "Cumulative Probability"
+  ) +
+  scale_color_viridis_d(labels = c(
+    "Mincer", "MW", "Additive", "Axially", "Totally"
+  )) +
+  scale_x_continuous(breaks = c(1, 2, 3, 4, 5)) + 
+  my_theme +
+  theme(legend.position = "right")
+
+performance_rank_cdf_plot_small
+```
+
+```{r}
+minus_log2_ratio <- "5"
+performance_rank_low_mid <- apply(
+    est_results[[minus_log2_ratio]], MARGIN = 1L, rank
+  ) %>% 
+  as.data.frame() %>% 
+  rownames_to_column("Model") %>% 
+  pivot_longer(cols = starts_with("result"), 
+               names_to = "Repetition", values_to = "Rank") %>%  
+  mutate(Model = fct_relevel(
+    Model, 
+    "mincer", "murphy", "additive", "axcon", "tc"
+  ))
+```
+
+```{r}
+performance_rank_cdf_plot_low_mid <- performance_rank_low_mid %>% 
+  ggplot() +
+  stat_ecdf(aes(Rank, color = Model), linewidth = 0.9) + 
+  labs(
+    title = "B",
+    y = "Cumulative Probability"
+  ) +
+  scale_color_viridis_d(labels = c(
+    "Mincer", "MW", "Additive", "Axially", "Totally"
+  )) +
+  scale_x_continuous(breaks = c(1, 2, 3, 4, 5)) + 
+  my_theme +
+  theme(legend.position = "right")
+
+performance_rank_cdf_plot_low_mid
+```
+
+```{r}
+minus_log2_ratio <- "3"
+performance_rank_upp_mid <- apply(
+    est_results[[minus_log2_ratio]], MARGIN = 1L, rank
+  ) %>% 
+  as.data.frame() %>% 
+  rownames_to_column("Model") %>% 
+  pivot_longer(cols = starts_with("result"), 
+               names_to = "Repetition", values_to = "Rank") %>%  
+  mutate(Model = fct_relevel(
+    Model, 
+    "mincer", "murphy", "additive", "axcon", "tc"
+  ))
+```
+
+```{r}
+performance_rank_cdf_plot_upp_mid <- performance_rank_upp_mid %>% 
+  ggplot() +
+  stat_ecdf(aes(Rank, color = Model), linewidth = 0.9) + 
+  labs(
+    title = "C",
+    y = "Cumulative Probability"
+  ) +
+  scale_color_viridis_d(labels = c(
+    "Mincer", "MW", "Additive", "Axially", "Totally"
+  )) +
+  scale_x_continuous(breaks = c(1, 2, 3, 4, 5)) + 
+  my_theme +
+  theme(legend.position = "right")
+
+performance_rank_cdf_plot_upp_mid
+```
+
+```{r}
+minus_log2_ratio <- "1"
+performance_rank_large <- apply(est_results[[minus_log2_ratio]], MARGIN = 1L, rank) %>% 
+  as.data.frame() %>% 
+  rownames_to_column("Model") %>% 
+  pivot_longer(cols = starts_with("result"), 
+               names_to = "Repetition", values_to = "Rank") %>%  
+  mutate(Model = fct_relevel(
+    Model, 
+    "mincer", "murphy", "additive", "axcon", "tc"
+  ))
+```
+
+```{r}
+performance_rank_cdf_plot_large <- performance_rank_large %>% 
+  ggplot() +
+  stat_ecdf(aes(Rank, color = Model), linewidth = 0.9) + 
+  labs(
+    title = "D",
+    y = "Cumulative Probability"
+  ) +
+  scale_color_viridis_d(labels = c(
+    "Mincer", "MW", "Additive", "Axially", "Totally"
+  )) +
+  scale_x_continuous(breaks = c(1, 2, 3, 4, 5)) + 
+  my_theme +
+  theme(legend.position = "right")
+
+performance_rank_cdf_plot_large
+########################################################################
+```
+
+```{r}
+performance_rank_cdf_plot <- ggarrange(
+  performance_rank_cdf_plot_small,
+  performance_rank_cdf_plot_low_mid,
+  performance_rank_cdf_plot_upp_mid,
+  performance_rank_cdf_plot_large,
+  nrow = 2L, ncol = 2L, 
+  common.legend = TRUE, legend = "right"
+)
+
+performance_rank_cdf_plot
+```
+
+```{r, eval = F}
+pdf(
+  "../../plots/ex1029/performance_rank_cdf_plot.pdf",
+  width = 6.3, height = 5.6
+)
+performance_rank_cdf_plot
 dev.off()
 ```

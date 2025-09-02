@@ -18,8 +18,9 @@ concave regression can be found in the folder `axcon`.
 ### ex1029
 
 - **`ex1029_rep.R`**: Conducts the main experiment for the dataset.
-- **`ex1029_rank_plot.Rmd`**: Creates the plot of the best-performing 
-ratios.
+- **`ex1029_rank_plot.Rmd`**: Creates the plots of the 
+best/worst-performing and top/bottom two ratios and the plots of 
+empirical cumulative distributions of the ranks.
 
 ### hprice
 
