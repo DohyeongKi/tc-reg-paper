@@ -66,7 +66,7 @@ best_methods_concave_mincer <- best_methods_concave_mincer %>%
   ))
 ```
 
-```{r, eval = F}
+```{r, eval = T}
 best_methods_concave_mincer %>% filter(sampling_ratio == '1/16') %>% 
   group_by(method) %>% 
   summarize(n = n())
@@ -149,9 +149,9 @@ top_bottom2_ratio_plot_concave_mincer <- ggarrange(
 top_bottom2_ratio_plot_concave_mincer
 ```
 
-```{r, eval = F}
+```{r, eval = T}
 pdf(
-  "../../plots/ex1029/top_bottom2_ratio.pdf",
+  "../../plots/ex1029/fig2_ex1029_top_bottom2_ratio.pdf",
   width = 5.6, height = 3.4
 )
 top_bottom2_ratio_plot_concave_mincer
@@ -256,9 +256,9 @@ top2_bottom_ratio_plot_concave_mincer <- ggarrange(
 top2_bottom_ratio_plot_concave_mincer
 ```
 
-```{r, eval = F}
+```{r, eval = T}
 pdf(
-  "../../plots/ex1029/top2_bottom_ratio.pdf",
+  "../../plots/ex1029/fig7_ex1029_top2_bottom_ratio.pdf",
   width = 5.6, height = 3.4
 )
 top2_bottom_ratio_plot_concave_mincer
@@ -407,9 +407,9 @@ performance_rank_cdf_plot <- ggarrange(
 performance_rank_cdf_plot
 ```
 
-```{r, eval = F}
+```{r, eval = T}
 pdf(
-  "../../plots/ex1029/performance_rank_cdf_plot.pdf",
+  "../../plots/ex1029/fig8_ex1029_performance_rank_cdf_plot.pdf",
   width = 6.3, height = 5.6
 )
 performance_rank_cdf_plot

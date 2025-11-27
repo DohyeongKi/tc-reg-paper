@@ -1,0 +1,125 @@
+
+R version 4.5.0 (2025-04-11) -- "How About a Twenty-Six"
+Copyright (C) 2025 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> rm(list = ls())
+> 
+> ########################################################################
+> # Source and Library ###################################################
+> library(tidyverse)
+── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+✔ purrr     1.0.4     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+> library(regmdc)
+> library(wooldridge)  # the k401ksubs data set
+> data(hprice2)
+> ########################################################################
+> 
+> ########################################################################
+> # Load Results #########################################################
+> load("../../results/hprice/hprice_overfitting.Rda")
+> our2_model <- results$our2_model
+> interaction3_model <- results$interaction3_model
+> ########################################################################
+> 
+> hprice2 <- hprice2 %>% 
++   mutate(
++     log_price = log(price),
++     log_nox = log(nox), 
++     log_dist = log(dist)
++   ) %>% 
++   select(log_price, log_nox, log_dist, crime, rooms, stratio)
+> 
+> m1 <- 51L
+> m2 <- 51L
+> 
+> log_nox <- median(hprice2$log_nox)
+> log_dist <- median(hprice2$log_dist)
+> crime <- seq(min(hprice2$crime), max(hprice2$crime), length.out = m1)
+> rooms <- seq(min(hprice2$rooms), max(hprice2$rooms), length.out = m2)
+> stratio <- median(hprice2$stratio)
+> 
+> X_plot <- expand.grid(
++   list(log_nox, log_dist, crime, rooms, stratio)
++ )
+> colnames(X_plot) <- c("log_nox", "log_dist", "crime", "rooms", "stratio")
+> 
+> our2_fit_plot <- predict_regmdc(our2_model, X_plot)
+> interaction3_fit_plot <- predict(interaction3_model, X_plot)
+> 
+> our2_fit_outer <- matrix(nrow = m1, ncol = m2)
+> interaction3_fit_outer <- matrix(nrow = m1, ncol = m2)
+> 
+> for (i in (1L:m1)) {
++   for (j in (1L:m2)) {
++     our2_fit_outer[i, j] <- our2_fit_plot[i + m1 * (j - 1L)]
++     interaction3_fit_outer[i, j] <- interaction3_fit_plot[i + m1 * (j - 1L)]
++   }
++ }
+> 
+> pdf(
++   "../../plots/hprice/fig4_hprice_overfitting_instance.pdf",
++   width = 5.8, height = 2.7
++ )
+> 
+> par(
++   mfrow = c(1, 2),
++   mar = c(0.8, 0.6, 0.9, 0.3)
++ )
+> persp(
++   crime, rooms, our2_fit_outer,
++   xlab = "per Captia Crime Rate", 
++   ylab = "Avg. Number of Rooms", 
++   zlab = "Log of Median Housing Price (dollars)",
++   cex.axis = 0.6, cex.lab = 0.7,
++   theta = -60, phi = 10,
++   shade = 0.3, lwd = 0.6,
++   ticktype = "detailed"
++ )
+> mtext("A", adj = 0, cex = 0.7)
+> 
+> persp(
++   crime, rooms, interaction3_fit_outer,
++   xlab = "per Captia Crime Rate", 
++   ylab = "Avg. Number of Rooms", 
++   zlab = "Log of Median Housing Price (dollars)",
++   cex.axis = 0.6, cex.lab = 0.7,
++   theta = -60, phi = 10,
++   shade = 0.3, lwd = 0.6,
++   ticktype = "detailed"
++ )
+> mtext("B", adj = 0, cex = 0.7)
+> 
+> dev.off()
+null device 
+          1 
+> gc()
+          used (Mb) gc trigger   (Mb)  max used   (Mb)
+Ncells  971809 52.0    1880485  100.5   1880485  100.5
+Vcells 2150288 16.5  569572964 4345.5 592163098 4517.9
+> 
+> proc.time()
+   user  system elapsed 
+ 21.895   5.715  25.724 

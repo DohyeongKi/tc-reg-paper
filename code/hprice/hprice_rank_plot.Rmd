@@ -42,7 +42,7 @@ my_theme <- theme_minimal() +
 performance_rank <- apply(estimation_results, MARGIN = 1L, rank)
 ```
 
-```{r, eval = F}
+```{r, eval = T}
 apply(performance_rank <= 1, MARGIN = 1L, sum)
 apply(performance_rank <= 3, MARGIN = 1L, sum)
 apply(performance_rank >= 8, MARGIN = 1L, sum)
@@ -83,9 +83,9 @@ performance_rank_cdf_plot
 ########################################################################
 ```
 
-```{r, eval = F}
+```{r, eval = T}
 pdf(
-  "../../plots/hprice/performance_rank_cdf_plot_no_reg.pdf",
+  "../../plots/hprice/fig3_hprice_performance_rank_cdf_plot_no_reg.pdf",
   width = 4.2, height = 2.8
 )
 performance_rank_cdf_plot
@@ -108,7 +108,7 @@ performance_rank_with_mod <- apply(estimation_results_with_mod,
                                    MARGIN = 1L, rank)
 ```
 
-```{r, eval = F}
+```{r, eval = T}
 apply(performance_rank_with_mod <= 1, MARGIN = 1L, sum)
 apply(performance_rank_with_mod <= 2, MARGIN = 1L, sum)
 apply(performance_rank_with_mod <= 3, MARGIN = 1L, sum)
@@ -153,9 +153,9 @@ performance_rank_cdf_plot_with_mod
 ########################################################################
 ```
 
-```{r, eval = F}
+```{r, eval = T}
 pdf(
-  "../../plots/hprice/performance_rank_cdf_plot_with_reg.pdf",
+  "../../plots/hprice/fig5_hprice_performance_rank_cdf_plot_with_reg.pdf",
   width = 4.2, height = 2.7
 )
 performance_rank_cdf_plot_with_mod

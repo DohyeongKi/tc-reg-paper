@@ -2,6 +2,7 @@ rm(list = ls())
 
 ########################################################################
 # Source and Library ###################################################
+library(tidyverse)
 library(regmdc)
 library(wooldridge)  # the k401ksubs data set
 data(hprice2)
@@ -50,7 +51,7 @@ for (i in (1L:m1)) {
 }
 
 pdf(
-  "../../plots/hprice/overfitting_instance_temp.pdf",
+  "../../plots/hprice/fig4_hprice_overfitting_instance.pdf",
   width = 5.8, height = 2.7
 )
 

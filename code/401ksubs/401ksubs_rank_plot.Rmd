@@ -43,7 +43,7 @@ my_theme <- theme_minimal() +
 performance_rank <- apply(estimation_results_combined, MARGIN = 1L, rank)
 ```
 
-```{r, eval = F}
+```{r, eval = T}
 apply(performance_rank <= 1, MARGIN = 1L, sum)
 apply(performance_rank <= 3, MARGIN = 1L, sum)
 apply(performance_rank >= 8, MARGIN = 1L, sum)
@@ -84,9 +84,9 @@ performance_rank_cdf_plot
 ########################################################################
 ```
 
-```{r, eval = F}
+```{r, eval = T}
 pdf(
-  "../../plots/401ksubs/performance_rank_cdf_plot.pdf",
+  "../../plots/401ksubs/fig6_401ksubs_performance_rank_cdf_plot.pdf",
   width = 4.3, height = 2.8
 )
 performance_rank_cdf_plot

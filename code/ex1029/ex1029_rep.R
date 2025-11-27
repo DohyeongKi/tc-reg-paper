@@ -4,8 +4,8 @@ set.seed(2024L)
 
 ########################################################################
 # Source, Library, and Data ############################################
-source("../../axcon/axcon.R")
-source("../../axcon/predict_axcon.R")
+source("../axcon/axcon.R")
+source("../axcon/predict_axcon.R")
 
 library(tidyverse)
 library(regmdc)
